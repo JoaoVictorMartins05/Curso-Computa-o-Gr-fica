@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <title>Primeiro Exemplo</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module">
+    import * as THREE from '/build/three.module.js';
+
+    let camera, scene, renderer;
+    let earth, flatEarth;
+    let r = 1;
+
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45,
+        window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(1, 1, 50);
+
+
+
+      let axesHelper = new THREE.AxesHelper(50);
+      scene.add(axesHelper);
+
+      function creatEarth() {
+        const geometry = new THREE.SphereGeometry(2, 20, 20);
+        const texture = new THREE.TextureLoader().load('terra.gif');
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+        earth = new THREE.Mesh(geometry, material);
+        scene.add(earth);
+      }
+
+      function creatFlatEarth() {
+        const geometry = new THREE.SphereGeometry(0.1, 20, 20);
+        const texture = new THREE.TextureLoader().load('terra.gif');
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+        flatEarth = new THREE.Mesh(geometry, material);
+        scene.add(flatEarth);
+        //flatEarth.position.set(15, 1, 1)
+        flatEarth.scale.x += 50
+        flatEarth.scale.z += 50
+      }
+
+      creatEarth();
+      creatFlatEarth();
+
+      renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+    }
+
+    const animate = function () {
+      requestAnimationFrame(animate);
+
+      r += 0.017;
+
+      console.log(r)
+
+      earth.position.x = 20 * Math.cos(r);
+      earth.position.z = 20 * Math.sin(r);
+
+      earth.rotation.y -= 0.02;
+
+      flatEarth.position.x = 20 * Math.cos(-r);
+      flatEarth.position.z = 20 * Math.sin(-r);
+
+
+      flatEarth.rotation.y += 0.02;
+
+      renderer.render(scene, camera);
+    };
+
+
+    init();
+    animate();
+
+  </script>
+
+</body>
+
+</html>
